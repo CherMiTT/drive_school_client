@@ -7,14 +7,16 @@
 */
 
 #include "requester.h"
+#include "session.h"
 
 const QString Requester::httpTemplate = "http://%1:%2/api/%3";
 const QString Requester::httpsTemplate = "https://%1:%2/api/%3";
+Requester *Requester::instance = nullptr;
 
 
 Requester::Requester(QObject* parent) : QObject(parent)
 {
-    manager = new QNetworkAccessManager(this);
+    this->manager = new QNetworkAccessManager(this);
     connect(manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(onFinishRequest(QNetworkReply*)));
     qDebug() << "connected manager";
 }
@@ -75,6 +77,15 @@ void Requester::sendRequest(const QString& apiStr, Requester::Type type, const Q
 
 }
 
+Requester* Requester::getInstance()
+{
+    if(instance == nullptr)
+    {
+        instance = new Requester();
+    }
+    return instance;
+}
+
 QNetworkRequest Requester::createRequest(const QString &apiStr) const
 {
     QNetworkRequest request;
@@ -99,10 +110,53 @@ QByteArray Requester::variantMapToJson(QVariantMap data)
     return postDataByteArray;
 }
 
-bool Requester::onFinishRequest(QNetworkReply* reply)
+void Requester::onFinishRequest(QNetworkReply* reply)
 {
     qDebug() << "In finished";
-    qDebug() << reply->readAll();
-    qDebug() << reply->error();
-    return false;
+
+    //qDebug() << reply->url();
+    if(reply->error() != QNetworkReply::NoError)
+    {
+        qDebug() << reply->url() << " " << reply->error();
+        return;
+    }
+
+    //if it's login request
+    if(reply->url().toString().endsWith("/api/login"))
+    {
+        qDebug() << "Processing authorization reply";
+        processAuthorizationRequest(reply);
+        return;
+    }
+
+    //if it's profile info request
+    if(reply->url().toString().endsWith("/api/profile-info"))
+    {
+        qDebug() << "Processing profile info reply";
+        return;
+    }
+    /*
+    QByteArray r = reply->readAll();
+
+    QJsonDocument doc = QJsonDocument::fromJson(r, &error);
+    qDebug() << doc.object().value("status");
+    */
+}
+
+void Requester::processAuthorizationRequest(QNetworkReply *reply)
+{
+    QByteArray r = reply->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(r);
+    if(doc.object().value("status") == "fail")
+    {
+        qDebug() << "Authorization request failed";
+        emit wrongAuthorizationData();
+        return;
+    }
+    else
+    {
+        QString token  = doc.object().value("token").toString();
+        Session::getInstance()->setToken(token);
+        emit successfulyAuthorized();
+    }
 }

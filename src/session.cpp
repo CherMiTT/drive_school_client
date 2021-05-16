@@ -28,7 +28,7 @@ void Session::updateSession(const QString& login, const QString& password)
 
     if(instance->requester == nullptr)
     {
-        instance->requester = new Requester();
+        instance->requester = Requester::getInstance();
         instance->requester->initRequester("localhost", 9090, nullptr);
     }
 }
@@ -48,9 +48,28 @@ QByteArray Session::getAuthorizationJson()
  * \brief returns pointer to the instance of requester
  * \return pointer to requester
  */
-const Requester* Session::getRequester()
+Requester *Session::getRequester()
 {
     return instance->requester;
+}
+
+Session *Session::getInstance()
+{
+    if(instance == nullptr)
+    {
+        instance = new Session();
+    }
+    return instance;
+}
+
+void Session::setToken(QString token)
+{
+    instance->token = token;
+}
+
+QString Session::getToken()
+{
+    return instance->token;
 }
 
 /*!
@@ -62,5 +81,6 @@ Session::Session()
     login = "";
     password = "";
     lastUpdateTime = QDateTime::currentDateTimeUtc();
+    token = "";
     requester = nullptr;
 }

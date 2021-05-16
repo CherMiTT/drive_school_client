@@ -19,14 +19,14 @@ MainWindow::MainWindow(QWidget *parent)
     connect(currentForm, SIGNAL(showRegisterForm(Forms)), this, SLOT(on_changeForm(Forms)));
 
     vLayout = new QVBoxLayout();
-    vLayout->addStretch();
+    //vLayout->addStretch();
     vLayout->addWidget(currentForm);
-    vLayout->addStretch();
+    //vLayout->addStretch();
 
     hLayout = new QHBoxLayout();
-    hLayout->addStretch();
+    //hLayout->addStretch();
     hLayout->addLayout(vLayout);
-    hLayout->addStretch();
+    //hLayout->addStretch();
 
     centralWidget = new QWidget();
     centralWidget->setLayout(hLayout);
@@ -48,6 +48,9 @@ void MainWindow::on_changeForm(Forms form)
     {
         replaceFormInHLayout(new EnterFormWidget());
         connect(currentForm, SIGNAL(showRestorePasswordForm(Forms)), this, SLOT(on_changeForm(Forms)));
+        connect(currentForm, SIGNAL(showMainMenuForm(Forms)), this, SLOT(on_changeForm(Forms)));
+        connect(Requester::getInstance(), SIGNAL(wrongAuthorizationData()), currentForm, SLOT(wrongLoginOrPassword()));
+        connect(Requester::getInstance(), SIGNAL(successfulyAuthorized()), currentForm, SLOT(authorized()));
         break;
     }
     case Forms::REGISTER_FORM:
@@ -65,6 +68,11 @@ void MainWindow::on_changeForm(Forms form)
         connect(currentForm, SIGNAL(showRegisterForm(Forms)), this, SLOT(on_changeForm(Forms)));
         break;
     }
+    case Forms::MAIN_MENU_FORM:
+    {
+        replaceFormInHLayout(new MainMenuFormWidget());
+        break;
+    }
     default:
     {
         break;
@@ -76,9 +84,9 @@ void MainWindow::replaceFormInHLayout(QWidget* form)
 {
     clearLayout(vLayout);
     currentForm = form;
-    vLayout->addStretch();
+    //vLayout->addStretch();
     vLayout->addWidget(currentForm);
-    vLayout->addStretch();
+    //vLayout->addStretch();
 }
 
 

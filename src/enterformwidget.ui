@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>800</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -22,8 +22,8 @@
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>110</y>
+     <x>330</x>
+     <y>300</y>
      <width>160</width>
      <height>108</height>
     </rect>
@@ -73,22 +73,17 @@
     </item>
    </layout>
   </widget>
-  <widget class="QTextBrowser" name="errorTextBrowser">
-   <property name="enabled">
-    <bool>false</bool>
-   </property>
+  <widget class="QLabel" name="errorLabel">
    <property name="geometry">
     <rect>
-     <x>60</x>
-     <y>40</y>
-     <width>301</width>
-     <height>51</height>
+     <x>290</x>
+     <y>250</y>
+     <width>251</width>
+     <height>31</height>
     </rect>
    </property>
-   <property name="font">
-    <font>
-     <pointsize>14</pointsize>
-    </font>
+   <property name="text">
+    <string/>
    </property>
   </widget>
  </widget>

@@ -17,7 +17,9 @@
 
 #include "welcomeformwidget.h"
 #include "enterformwidget.h"
+#include "mainmenuformwidget.h"
 #include "forms.h"
+#include "requester.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }

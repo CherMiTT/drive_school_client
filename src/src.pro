@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
+    mainmenuformwidget.cpp \
     mainwindow.cpp \
     requester.cpp \
     session.cpp \
@@ -18,6 +19,7 @@ SOURCES += \
     validator.cpp
 
 HEADERS += \
+    mainmenuformwidget.h \
     mainwindow.h \
     requester.h \
     session.h \
@@ -27,6 +29,7 @@ HEADERS += \
     validator.h
 
 FORMS += \
+    mainmenuformwidget.ui \
     mainwindow.ui \
     mainwindow.ui \
     welcomeformwidget.ui \

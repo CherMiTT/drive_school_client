@@ -25,17 +25,22 @@ class Session
 public:
     static void updateSession(const QString& login, const QString& password);
     [[nodiscard]] static QByteArray getAuthorizationJson();
-    [[nodiscard]] static const Requester* getRequester();
+    [[nodiscard]] static Requester *getRequester();
+    [[nodiscard]] static Session *getInstance();
+    void setToken(QString token);
+    [[nodiscard]] QString getToken();
 
 private:
     Session();
 
     QString login;
     QString password;
+    QString token;
     QDateTime lastUpdateTime;
-    Requester* requester;
+    Requester *requester;
 
     static Session* instance;
+
 };
 
 #endif // SESSION_H

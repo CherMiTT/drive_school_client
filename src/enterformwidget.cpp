@@ -30,24 +30,39 @@ void EnterFormWidget::on_loginButton_clicked()
 {
     qDebug() << "LogIn button clicked";
 
+    ui->errorLabel->setText("");
     QString login = ui->loginLineEdit->text();
     QString pass = ui->passwordLineEdit->text();
 
-    if(login.length() <= 5 || pass.length() < 8)
+    if(login.length() < 5 || pass.length() < 5)
     {
         qDebug() << "Too short login or password!";
+        ui->errorLabel->setText("Логин и пароль не могут быть короче 5 символов");
         return;
     }
 
+    //md5 hash
+    pass = QString(QCryptographicHash::hash(pass.toUtf8(), QCryptographicHash::Md5).toHex());
+
     Session::updateSession(login, pass);
-    const Requester* requester = Session::getRequester();
+    Requester* requester = Session::getRequester();
 
     requester->sendRequest("login", Requester::Type::POST, Session::getAuthorizationJson());
-    qDebug("Request sent");
+    qDebug("Authorization request sent");
 }
 
 void EnterFormWidget::on_forgotPasswordButton_clicked()
 {
     qDebug() << "Forgot password button clicked";
     emit showRestorePasswordForm(Forms::RESTORE_PASSWORD_FORM);
+}
+
+void EnterFormWidget::wrongLoginOrPassword()
+{
+    ui->errorLabel->setText("Неверный логин или пароль");
+}
+
+void EnterFormWidget::authorized()
+{
+    emit showMainMenuForm(Forms::MAIN_MENU_FORM);
 }

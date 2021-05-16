@@ -61,7 +61,7 @@ void tst_EnterFormTest::structureCreatedTest()
     QVERIFY2(w->ui->loginButton, "loginButton edit not created");
     QCOMPARE(w->ui->loginButton->text(), "Войти");
 
-    QVERIFY2(w->ui->errorTextBrowser, "errorTextBrowser edit not created");
+    QVERIFY2(w->ui->errorLabel, "errorTextBrowser edit not created");
 }
 
 void tst_EnterFormTest::dataEntry_data()

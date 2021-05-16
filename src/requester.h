@@ -21,6 +21,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
+
 /*!
  * \brief class that handles all requests to and from server
  */
@@ -39,15 +40,19 @@ public:
         DELETE
     };
 
-    explicit Requester(QObject* parent = nullptr);
-
+    [[nodiscard]] static Requester* getInstance();
     void initRequester(const QString& host, int port, QSslConfiguration* value);
     void sendRequest(const QString& apiStr, Type type = Type::GET, const QByteArray& data = QByteArray()) const;
 
 signals:
+    void wrongAuthorizationData();
+    void successfulyAuthorized();
 
 private:
 
+    explicit Requester(QObject* parent = nullptr);
+
+    static Requester *instance;
     static const QString httpTemplate;
     static const QString httpsTemplate;
 
@@ -64,8 +69,9 @@ private:
     [[nodiscard]] QByteArray variantMapToJson(QVariantMap data);
 
 private slots:
-    bool onFinishRequest(QNetworkReply* reply);
+    void onFinishRequest(QNetworkReply* reply);
 
+    void processAuthorizationRequest(QNetworkReply* reply);
 };
 
 #endif // REQUESTER_H
