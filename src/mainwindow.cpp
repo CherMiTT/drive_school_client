@@ -48,9 +48,10 @@ void MainWindow::on_changeForm(Forms form)
     {
         replaceFormInHLayout(new EnterFormWidget());
         connect(currentForm, SIGNAL(showRestorePasswordForm(Forms)), this, SLOT(on_changeForm(Forms)));
-        connect(currentForm, SIGNAL(showMainMenuForm(Forms)), this, SLOT(on_changeForm(Forms)));
+        connect(currentForm, SIGNAL(showMenuForm(Forms)), this, SLOT(on_changeForm(Forms)));
         connect(Requester::getInstance(), SIGNAL(wrongAuthorizationData()), currentForm, SLOT(wrongLoginOrPassword()));
-        connect(Requester::getInstance(), SIGNAL(successfulyAuthorized()), currentForm, SLOT(authorized()));
+        connect(Requester::getInstance(), SIGNAL(successfullyAuthorized()), currentForm, SLOT(authorized()));
+        connect(Requester::getInstance(), SIGNAL(successfullyGotUserInfo()), currentForm, SLOT(changeWidget()));
         break;
     }
     case Forms::REGISTER_FORM:
@@ -68,9 +69,15 @@ void MainWindow::on_changeForm(Forms form)
         connect(currentForm, SIGNAL(showRegisterForm(Forms)), this, SLOT(on_changeForm(Forms)));
         break;
     }
-    case Forms::MAIN_MENU_FORM:
+    case Forms::MENU_FORM:
     {
-        replaceFormInHLayout(new MainMenuFormWidget());
+        replaceFormInHLayout(new MenuFormWidget());
+        break;
+    }
+    case Forms::ADMIN_PANEL_FORM:
+    {
+        replaceFormInHLayout(new AdminPanelFormWidget());
+        connect(Requester::getInstance(), SIGNAL(addUserResult(bool)), currentForm, SLOT(userAddResult(bool)));
         break;
     }
     default:

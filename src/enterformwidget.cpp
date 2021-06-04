@@ -64,5 +64,21 @@ void EnterFormWidget::wrongLoginOrPassword()
 
 void EnterFormWidget::authorized()
 {
-    emit showMainMenuForm(Forms::MAIN_MENU_FORM);
+    QJsonObject token {{"token", Session::getInstance()->getToken()}};
+    Requester* requester = Session::getRequester();
+    requester->sendRequest("user-info", Requester::Type::POST, QJsonDocument(token).toJson());
+
+    qDebug("User info request sent");
+}
+
+void EnterFormWidget::changeWidget()
+{
+    if(Session::getInstance()->getRole() == Roles::ADMIN)
+    {
+        emit showMenuForm(Forms::ADMIN_PANEL_FORM);
+    }
+    else
+    {
+        emit showMenuForm(Forms::MENU_FORM);
+    }
 }

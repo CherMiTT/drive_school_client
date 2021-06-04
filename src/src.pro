@@ -9,9 +9,10 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    adminpanelformwidget.cpp \
     main.cpp \
-    mainmenuformwidget.cpp \
     mainwindow.cpp \
+    menuformwidget.cpp \
     requester.cpp \
     session.cpp \
     welcomeformwidget.cpp \
@@ -19,8 +20,9 @@ SOURCES += \
     validator.cpp
 
 HEADERS += \
-    mainmenuformwidget.h \
+    adminpanelformwidget.h \
     mainwindow.h \
+    menuformwidget.h \
     requester.h \
     session.h \
     welcomeformwidget.h \
@@ -29,9 +31,10 @@ HEADERS += \
     validator.h
 
 FORMS += \
-    mainmenuformwidget.ui \
+    adminpanelformwidget.ui \
     mainwindow.ui \
     mainwindow.ui \
+    menuformwidget.ui \
     welcomeformwidget.ui \
     enterformwidget.ui
 

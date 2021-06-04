@@ -130,9 +130,16 @@ void Requester::onFinishRequest(QNetworkReply* reply)
     }
 
     //if it's profile info request
-    if(reply->url().toString().endsWith("/api/profile-info"))
+    if(reply->url().toString().endsWith("/api/user-info"))
     {
         qDebug() << "Processing profile info reply";
+        processUserInfoRequest(reply);
+        return;
+    }
+    if(reply->url().toString().endsWith("/api/add/user"))
+    {
+        qDebug() << "Processing add user reply";
+        processAddUserRequest(reply);
         return;
     }
     /*
@@ -155,8 +162,52 @@ void Requester::processAuthorizationRequest(QNetworkReply *reply)
     }
     else
     {
-        QString token  = doc.object().value("token").toString();
+        QString token = doc.object().value("token").toString();
         Session::getInstance()->setToken(token);
-        emit successfulyAuthorized();
+        emit successfullyAuthorized();
+    }
+}
+
+void Requester::processUserInfoRequest(QNetworkReply *reply)
+{
+    QByteArray r = reply->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(r);
+    if(doc.object().value("status") == "fail")
+    {
+        qDebug() << "User info request failed";
+        return;
+    }
+    else
+    {
+        QString roleStr = doc.object().value("role").toString();
+        Roles role;
+        if(roleStr == "a") role = Roles::ADMIN;
+        else if(roleStr == "i") role = Roles::INSTRUCTOR;
+        else role = Roles::STUDENT;
+
+        Session::getInstance()->setUserInfo(doc.object().value("first_name").toString(),
+                                            doc.object().value("middle_name").toString(),
+                                            doc.object().value("last_name").toString(),
+                                            role);
+        emit successfullyGotUserInfo();
+    }
+
+}
+
+void Requester::processAddUserRequest(QNetworkReply *reply)
+{
+    QByteArray r = reply->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(r);
+    if(doc.object().value("status") == "fail")
+    {
+        qDebug() << "Failed to add user";
+        emit addUserResult(false);
+        return;
+    }
+    else
+    {
+        qDebug() << "User added successfully";
+        emit addUserResult(true);
+        return;
     }
 }

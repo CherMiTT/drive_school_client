@@ -20,7 +20,8 @@ enum class Forms
     ENTER_FORM,
     REGISTER_FORM,
     RESTORE_PASSWORD_FORM,
-    MAIN_MENU_FORM
+    MENU_FORM,
+    ADMIN_PANEL_FORM
 };
 
 #endif // FORMS_H

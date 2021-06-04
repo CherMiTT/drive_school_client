@@ -18,6 +18,16 @@
 #include "requester.h"
 
 /*!
+ * \brief roles of users enum
+ */
+enum class Roles
+{
+    STUDENT,
+    INSTRUCTOR,
+    ADMIN
+};
+
+/*!
  * \brief singleton class of current session
  */
 class Session
@@ -29,6 +39,11 @@ public:
     [[nodiscard]] static Session *getInstance();
     void setToken(QString token);
     [[nodiscard]] QString getToken();
+    void setUserInfo(QString first_name, QString middle_name, QString last_name, Roles role);
+    [[nodiscard]] Roles getRole() {return instance->role;}
+    [[nodiscard]] QString getFirstName() {return instance->first_name;}
+    [[nodiscard]] QString getMiddleName() {return instance->middle_name;}
+    [[nodiscard]] QString getLastName() {return instance->last_name;}
 
 private:
     Session();
@@ -39,8 +54,12 @@ private:
     QDateTime lastUpdateTime;
     Requester *requester;
 
-    static Session* instance;
+    QString first_name;
+    QString middle_name;
+    QString last_name;
+    Roles role;
 
+    static Session* instance;
 };
 
 #endif // SESSION_H

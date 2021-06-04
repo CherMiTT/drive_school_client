@@ -17,7 +17,8 @@
 
 #include "welcomeformwidget.h"
 #include "enterformwidget.h"
-#include "mainmenuformwidget.h"
+#include "menuformwidget.h"
+#include "adminpanelformwidget.h"
 #include "forms.h"
 #include "requester.h"
 

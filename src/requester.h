@@ -46,7 +46,9 @@ public:
 
 signals:
     void wrongAuthorizationData();
-    void successfulyAuthorized();
+    void successfullyAuthorized();
+    void successfullyGotUserInfo();
+    void addUserResult(bool);
 
 private:
 
@@ -71,7 +73,9 @@ private:
 private slots:
     void onFinishRequest(QNetworkReply* reply);
 
-    void processAuthorizationRequest(QNetworkReply* reply);
+    void processAuthorizationRequest(QNetworkReply *reply);
+    void processUserInfoRequest(QNetworkReply *reply);
+    void processAddUserRequest(QNetworkReply *reply);
 };
 
 #endif // REQUESTER_H

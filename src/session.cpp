@@ -72,6 +72,14 @@ QString Session::getToken()
     return instance->token;
 }
 
+void Session::setUserInfo(QString first_name, QString middle_name, QString last_name, Roles role)
+{
+    instance->first_name = first_name;
+    instance->last_name = last_name;
+    instance->middle_name = middle_name;
+    instance->role = role;
+}
+
 /*!
  * \brief Private constructor of the singleton
  */

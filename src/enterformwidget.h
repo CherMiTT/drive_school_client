@@ -41,11 +41,12 @@ private slots:
     void on_forgotPasswordButton_clicked();
     void wrongLoginOrPassword();
     void authorized();
+    void changeWidget();
 
 public:
 signals:
     void showRestorePasswordForm(Forms);
-    void showMainMenuForm(Forms);
+    void showMenuForm(Forms);
 
 private:
     QByteArray formLogInJsonByteArr(const QString&, const QString&);
