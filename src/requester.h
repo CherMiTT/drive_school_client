@@ -20,7 +20,7 @@
 #include <QByteArray>
 #include <QJsonDocument>
 #include <QJsonObject>
-
+#include <QJsonArray>
 
 /*!
  * \brief class that handles all requests to and from server
@@ -49,6 +49,14 @@ signals:
     void successfullyAuthorized();
     void successfullyGotUserInfo();
     void addUserResult(bool);
+    void showAllUsersArray(QJsonArray arr);
+    void showAdminsArray(QJsonArray arr);
+    void showIstructorsArray(QJsonArray arr);
+    void showStudentsArray(QJsonArray arr);
+    void showGroupsArray(QJsonArray arr);
+    void showCarsArray(QJsonArray arr);
+    void showRoomsArray(QJsonArray arr);
+    void getStudentGroup(QStringList groups);
 
 private:
 
@@ -76,6 +84,14 @@ private slots:
     void processAuthorizationRequest(QNetworkReply *reply);
     void processUserInfoRequest(QNetworkReply *reply);
     void processAddUserRequest(QNetworkReply *reply);
+    void processAllUsersRequest(QNetworkReply *reply);
+    void processAdminsRequest(QNetworkReply *reply);
+    void processInstructorsRequest(QNetworkReply *reply);
+    void processStudentsRequest(QNetworkReply *reply);
+    void processGroupsRequest(QNetworkReply *reply);
+    void processCarsRequest(QNetworkReply *reply);
+    void processRoomsRequest(QNetworkReply *reply);
+    void processGroupListRequest(QNetworkReply *reply);
 };
 
 #endif // REQUESTER_H

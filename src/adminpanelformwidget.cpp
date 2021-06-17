@@ -6,28 +6,18 @@ AdminPanelFormWidget::AdminPanelFormWidget(QWidget *parent) :
     ui(new Ui::AdminPanelFormWidget)
 {
     ui->setupUi(this);
+    connect(Session::getRequester(), SIGNAL(showAllUsersArray(QJsonArray)), this, SLOT(on_receivedAllUsersArray(QJsonArray)));
+    connect(Session::getRequester(), SIGNAL(showAdminsArray(QJsonArray)), this, SLOT(on_receivedAdminsArray(QJsonArray)));
+    connect(Session::getRequester(), SIGNAL(showIstructorsArray(QJsonArray)), this, SLOT(on_receivedInstructorsArray(QJsonArray)));
+    connect(Session::getRequester(), SIGNAL(showStudentsArray(QJsonArray)), this, SLOT(on_receivedStudentsArray(QJsonArray)));
+    connect(Session::getRequester(), SIGNAL(showGroupsArray(QJsonArray)), this, SLOT(on_receivedGroupsArray(QJsonArray)));
+    connect(Session::getRequester(), SIGNAL(showCarsArray(QJsonArray)), this, SLOT(on_receivedCarsArray(QJsonArray)));
+    connect(Session::getRequester(), SIGNAL(showRoomsArray(QJsonArray)), this, SLOT(on_receivedRoomsArray(QJsonArray)));
+    connect(Session::getRequester(), SIGNAL(getStudentGroup(QStringList)), this, SLOT(addStudent(QStringList)));
+
+    on_pickUsersTabWidget_currentChanged(0);
 
     //TODO: сделать валидацию
-
-    /*QRegularExpression nameRegEx("[A-Z, a-z, а-я, А-Я]{0, 20}");
-    QRegularExpression phoneRegEx("((\+7|7|8)+([0-9]){10})");
-    QRegularExpression emailRegEx("(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|\"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])");
-    QRegularExpression passwordRegEx("(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,}$");
-    QRegularExpression loginRegEx("(?=.*[A-Za-z0-9]$)[A-Za-z][A-Za-z\d.-]{0,19}");
-
-    QValidator *nameValidator = new QRegularExpressionValidator(nameRegEx);
-    QValidator *emailValidator = new QRegularExpressionValidator(emailRegEx);
-    QValidator *phoneValidator = new QRegularExpressionValidator(phoneRegEx);
-    QValidator *passwordValidator = new QRegularExpressionValidator(passwordRegEx);
-    QValidator *loginValidator = new QRegularExpressionValidator(loginRegEx);
-
-    ui->nameLineEdit->setValidator(nameValidator);
-    ui->lastnameLineEdit->setValidator(nameValidator);
-    ui->middleNameLineEdit->setValidator(nameValidator);
-    ui->phoneNumberLineEdit->setValidator(phoneValidator);
-    ui->emailLineEdit->setValidator(emailValidator);
-    ui->passwordLineEdit->setValidator(passwordValidator);
-    ui->loginLineEdit->setValidator(loginValidator);*/
 }
 
 AdminPanelFormWidget::~AdminPanelFormWidget()
@@ -90,8 +80,15 @@ void AdminPanelFormWidget::on_addUserPushButton_clicked()
         return;
     }
 
-    //form json and send request
     Requester* requester = Session::getRequester();
+    if(ui->roleComboBox->currentIndex() == 2) //Если студент
+    {
+        QJsonObject token {{"token", Session::getInstance()->getToken()}};
+        requester->sendRequest("group-list", Requester::Type::POST, QJsonDocument(token).toJson());
+        return;
+    }
+
+    //form json and send request
     requester->sendRequest("add/user", Requester::Type::POST, getNewUserJson());
 
 }
@@ -104,7 +101,7 @@ void AdminPanelFormWidget::userAddResult(bool success)
         ui->statusLabel->setText("Не удалось добавить пользователя");
 }
 
-QByteArray AdminPanelFormWidget::getNewUserJson()
+QByteArray AdminPanelFormWidget::getNewUserJson(QString group)
 {
     QString password = QString(QCryptographicHash::hash(ui->passwordLineEdit->text().toUtf8(), QCryptographicHash::Md5).toHex());
     int roleIndex =  ui->roleComboBox->currentIndex();
@@ -112,11 +109,200 @@ QByteArray AdminPanelFormWidget::getNewUserJson()
     if(roleIndex == 1) role = "i";
     else if (roleIndex == 2) role = "s";
 
-    QJsonObject obj {{"token", Session::getInstance()->getToken()}, {"name", ui->nameLineEdit->text()},
+    QJsonObject obj;
+    if(group == "") QJsonObject obj {{"token", Session::getInstance()->getToken()}, {"name", ui->nameLineEdit->text()},
                      {"middle_name", ui->middleNameLineEdit->text()}, {"last_name", ui->lastNameLineEdit->text()},
                      {"login", ui->loginLineEdit->text()}, {"password", password},
                      {"phone_number", ui->phoneNumberLineEdit->text()}, {"email", ui->emailLineEdit->text()},
                      {"pass", ui->passLineEdit->text()}, {"role",  role}};
+    else QJsonObject obj {{"token", Session::getInstance()->getToken()}, {"name", ui->nameLineEdit->text()},
+                          {"middle_name", ui->middleNameLineEdit->text()}, {"last_name", ui->lastNameLineEdit->text()},
+                          {"login", ui->loginLineEdit->text()}, {"password", password},
+                          {"phone_number", ui->phoneNumberLineEdit->text()}, {"email", ui->emailLineEdit->text()},
+                          {"pass", ui->passLineEdit->text()}, {"role",  role}, {"group", group}};
+
     qDebug() << obj;
     return QJsonDocument(obj).toJson();
+}
+
+void AdminPanelFormWidget::on_pickUsersTabWidget_currentChanged(int index)
+{
+    QJsonObject token {{"token", Session::getInstance()->getToken()}};
+    Requester* requester = Session::getRequester();
+
+    switch (index)
+    {
+    case 0:
+    {
+        qDebug() << "Displaying all users";
+        requester->sendRequest("all-users", Requester::Type::POST, QJsonDocument(token).toJson());
+        break;
+    }
+    case 1:
+    {
+        qDebug() << "Displaying students";
+        requester->sendRequest("all-students", Requester::Type::POST, QJsonDocument(token).toJson());
+        break;
+    }
+    case 2:
+    {
+        qDebug() << "Displaying instructors";
+        requester->sendRequest("all-instructors", Requester::Type::POST, QJsonDocument(token).toJson());
+        break;
+    }
+    case 3:
+    {
+        qDebug() << "Displaying admins";
+        requester->sendRequest("all-admins", Requester::Type::POST, QJsonDocument(token).toJson());
+        break;
+    }
+    case 4:
+    {
+        qDebug() << "Displaying groups";
+        requester->sendRequest("all-groups", Requester::Type::POST, QJsonDocument(token).toJson());
+        break;
+    }
+    case 5:
+    {
+        qDebug() << "Displaying cars";
+        requester->sendRequest("all-cars", Requester::Type::POST, QJsonDocument(token).toJson());
+        break;
+    }
+    case 6:
+    {
+        qDebug() << "Displaying rooms";
+        requester->sendRequest("all-rooms", Requester::Type::POST, QJsonDocument(token).toJson());
+        break;
+    }
+
+    }
+}
+
+void AdminPanelFormWidget::on_receivedAllUsersArray(QJsonArray arr)
+{
+    ui->allUsersTableWidget->setRowCount(arr.count());
+
+    for(int i = 0; i < arr.count(); i++)
+    {
+        QJsonObject o = arr[i].toObject();
+        ui->allUsersTableWidget->setItem(i, 0, new QTableWidgetItem(o.value("login").toString()));
+        ui->allUsersTableWidget->setItem(i, 1, new QTableWidgetItem(o.value("first_name").toString()));
+        ui->allUsersTableWidget->setItem(i, 2, new QTableWidgetItem(o.value("last_name").toString()));
+        ui->allUsersTableWidget->setItem(i, 3, new QTableWidgetItem(o.value("middle_name").toString()));
+        ui->allUsersTableWidget->setItem(i, 4, new QTableWidgetItem(o.value("phone_number").toString()));
+        ui->allUsersTableWidget->setItem(i, 5, new QTableWidgetItem(o.value("email").toString()));
+        ui->allUsersTableWidget->setItem(i, 6, new QTableWidgetItem(o.value("pass_number").toString()));
+        ui->allUsersTableWidget->setItem(i, 7, new QTableWidgetItem(o.value("registration_date").toString()));
+        ui->allUsersTableWidget->setItem(i, 8, new QTableWidgetItem(o.value("role").toString()));
+    }
+}
+
+void AdminPanelFormWidget::on_receivedAdminsArray(QJsonArray arr)
+{
+    ui->allAdminsTableWidget->setRowCount(arr.count());
+
+    for(int i = 0; i < arr.count(); i++)
+    {
+        QJsonObject o = arr[i].toObject();
+        ui->allAdminsTableWidget->setItem(i, 0, new QTableWidgetItem(o.value("login").toString()));
+        ui->allAdminsTableWidget->setItem(i, 1, new QTableWidgetItem(o.value("first_name").toString()));
+        ui->allAdminsTableWidget->setItem(i, 2, new QTableWidgetItem(o.value("last_name").toString()));
+        ui->allAdminsTableWidget->setItem(i, 3, new QTableWidgetItem(o.value("middle_name").toString()));
+        ui->allAdminsTableWidget->setItem(i, 4, new QTableWidgetItem(o.value("phone_number").toString()));
+        ui->allAdminsTableWidget->setItem(i, 5, new QTableWidgetItem(o.value("email").toString()));
+    }
+}
+
+void AdminPanelFormWidget::on_receivedInstructorsArray(QJsonArray arr)
+{
+    ui->allInstructorsTableWidget->setRowCount(arr.count());
+
+    for(int i = 0; i < arr.count(); i++)
+    {
+        QJsonObject o = arr[i].toObject();
+        ui->allInstructorsTableWidget->setItem(i, 0, new QTableWidgetItem(o.value("login").toString()));
+        ui->allInstructorsTableWidget->setItem(i, 1, new QTableWidgetItem(o.value("first_name").toString()));
+        ui->allInstructorsTableWidget->setItem(i, 2, new QTableWidgetItem(o.value("last_name").toString()));
+        ui->allInstructorsTableWidget->setItem(i, 3, new QTableWidgetItem(o.value("middle_name").toString()));
+        ui->allInstructorsTableWidget->setItem(i, 4, new QTableWidgetItem(o.value("phone_number").toString()));
+        ui->allInstructorsTableWidget->setItem(i, 5, new QTableWidgetItem(o.value("email").toString()));
+        ui->allInstructorsTableWidget->setItem(i, 7, new QTableWidgetItem(o.value("hired_date").toString()));
+        ui->allInstructorsTableWidget->setItem(i, 8, new QTableWidgetItem(o.value("salary").toString()));
+    }
+}
+
+void AdminPanelFormWidget::on_receivedStudentsArray(QJsonArray arr)
+{
+    ui->allStudentsTableWidget->setRowCount(arr.count());
+
+    for(int i = 0; i < arr.count(); i++)
+    {
+        QJsonObject o = arr[i].toObject();
+        ui->allStudentsTableWidget->setItem(i, 0, new QTableWidgetItem(o.value("login").toString()));
+        ui->allStudentsTableWidget->setItem(i, 1, new QTableWidgetItem(o.value("first_name").toString()));
+        ui->allStudentsTableWidget->setItem(i, 2, new QTableWidgetItem(o.value("last_name").toString()));
+        ui->allStudentsTableWidget->setItem(i, 3, new QTableWidgetItem(o.value("middle_name").toString()));
+        ui->allStudentsTableWidget->setItem(i, 4, new QTableWidgetItem(o.value("phone_number").toString()));
+        ui->allStudentsTableWidget->setItem(i, 5, new QTableWidgetItem(o.value("email").toString()));
+        ui->allStudentsTableWidget->setItem(i, 6, new QTableWidgetItem(o.value("group").toString()));
+    }
+}
+
+void AdminPanelFormWidget::on_receivedGroupsArray(QJsonArray arr)
+{
+    ui->allGroupsTableWidget->setRowCount(arr.count());
+
+    for(int i = 0; i < arr.count(); i++)
+    {
+        QJsonObject o = arr[i].toObject();
+        ui->allGroupsTableWidget->setItem(i, 0, new QTableWidgetItem(o.value("id").toString()));
+        ui->allGroupsTableWidget->setItem(i, 1, new QTableWidgetItem(o.value("group").toString()));
+    }
+}
+
+void AdminPanelFormWidget::on_receivedCarsArray(QJsonArray arr)
+{
+    ui->allCarsTableWidget->setRowCount(arr.count());
+
+    for(int i = 0; i < arr.count(); i++)
+    {
+        QJsonObject o = arr[i].toObject();
+        ui->allCarsTableWidget->setItem(i, 0, new QTableWidgetItem(o.value("plate").toString()));
+        ui->allCarsTableWidget->setItem(i, 1, new QTableWidgetItem(o.value("model").toString()));
+        ui->allCarsTableWidget->setItem(i, 2, new QTableWidgetItem(o.value("status").toString()));
+    }
+}
+
+void AdminPanelFormWidget::on_receivedRoomsArray(QJsonArray arr)
+{
+    ui->allRoomsTableWidget->setRowCount(arr.count());
+
+    for(int i = 0; i < arr.count(); i++)
+    {
+        QJsonObject o = arr[i].toObject();
+        ui->allRoomsTableWidget->setItem(i, 0, new QTableWidgetItem(o.value("number").toString()));
+    }
+}
+
+void AdminPanelFormWidget::addStudent(QStringList groups)
+{
+    bool notCanceled;
+    QString group = QInputDialog::getItem(this, "Выбор группы", "Выберите группу",
+                                        groups, 0, false, &notCanceled);
+    if (!notCanceled)
+    {
+        Requester* requester = Session::getRequester();
+        //form json and send request
+        requester->sendRequest("add/user", Requester::Type::POST, getNewUserJson(group));
+    }
+}
+
+void AdminPanelFormWidget::on_addCarPushButton_clicked()
+{
+
+}
+
+void AdminPanelFormWidget::on_addUserFromViewPushButton_clicked()
+{
+    ui->mainTabWidget->setCurrentIndex(1);
 }
