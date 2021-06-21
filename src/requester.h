@@ -92,6 +92,7 @@ private slots:
     void processCarsRequest(QNetworkReply *reply);
     void processRoomsRequest(QNetworkReply *reply);
     void processGroupListRequest(QNetworkReply *reply);
+    void processAddCarRequest(QNetworkReply *reply);
 };
 
 #endif // REQUESTER_H

@@ -1,5 +1,6 @@
 #include "adminpanelformwidget.h"
 #include "ui_adminpanelformwidget.h"
+#include "addcardialog.h"
 
 AdminPanelFormWidget::AdminPanelFormWidget(QWidget *parent) :
     QWidget(parent),
@@ -88,6 +89,20 @@ void AdminPanelFormWidget::on_addUserPushButton_clicked()
         return;
     }
 
+    if(ui->roleComboBox->currentIndex() == 1) //Если инструктор
+    {
+        bool notCanceled;
+        int salary = QInputDialog::getInt(this, "Зарплата", "Зарплата", 10000, 1000, 100000, 1, &notCanceled);
+        if (notCanceled)
+        {
+            Requester* requester = Session::getRequester();
+            //form json and send request
+
+            requester->sendRequest("add/user", Requester::Type::POST, getNewUserJson("", salary));
+        }
+        return;
+    }
+
     //form json and send request
     requester->sendRequest("add/user", Requester::Type::POST, getNewUserJson());
 
@@ -101,7 +116,7 @@ void AdminPanelFormWidget::userAddResult(bool success)
         ui->statusLabel->setText("Не удалось добавить пользователя");
 }
 
-QByteArray AdminPanelFormWidget::getNewUserJson(QString group)
+QByteArray AdminPanelFormWidget::getNewUserJson(QString group, int salary)
 {
     QString password = QString(QCryptographicHash::hash(ui->passwordLineEdit->text().toUtf8(), QCryptographicHash::Md5).toHex());
     int roleIndex =  ui->roleComboBox->currentIndex();
@@ -110,16 +125,21 @@ QByteArray AdminPanelFormWidget::getNewUserJson(QString group)
     else if (roleIndex == 2) role = "s";
 
     QJsonObject obj;
-    if(group == "") QJsonObject obj {{"token", Session::getInstance()->getToken()}, {"name", ui->nameLineEdit->text()},
+    if(group != "") obj = QJsonObject{{"token", Session::getInstance()->getToken()}, {"name", ui->nameLineEdit->text()},
                      {"middle_name", ui->middleNameLineEdit->text()}, {"last_name", ui->lastNameLineEdit->text()},
                      {"login", ui->loginLineEdit->text()}, {"password", password},
                      {"phone_number", ui->phoneNumberLineEdit->text()}, {"email", ui->emailLineEdit->text()},
-                     {"pass", ui->passLineEdit->text()}, {"role",  role}};
-    else QJsonObject obj {{"token", Session::getInstance()->getToken()}, {"name", ui->nameLineEdit->text()},
+                     {"pass", ui->passLineEdit->text()}, {"role",  role}, {"group", group}};
+    else if(salary != 0) obj = QJsonObject{{"token", Session::getInstance()->getToken()}, {"name", ui->nameLineEdit->text()},
                           {"middle_name", ui->middleNameLineEdit->text()}, {"last_name", ui->lastNameLineEdit->text()},
                           {"login", ui->loginLineEdit->text()}, {"password", password},
                           {"phone_number", ui->phoneNumberLineEdit->text()}, {"email", ui->emailLineEdit->text()},
-                          {"pass", ui->passLineEdit->text()}, {"role",  role}, {"group", group}};
+                          {"pass", ui->passLineEdit->text()}, {"role",  role}, {"salary", salary}};
+    else obj = QJsonObject{{"token", Session::getInstance()->getToken()}, {"name", ui->nameLineEdit->text()},
+            {"middle_name", ui->middleNameLineEdit->text()}, {"last_name", ui->lastNameLineEdit->text()},
+            {"login", ui->loginLineEdit->text()}, {"password", password},
+            {"phone_number", ui->phoneNumberLineEdit->text()}, {"email", ui->emailLineEdit->text()},
+            {"pass", ui->passLineEdit->text()}, {"role",  role}};
 
     qDebug() << obj;
     return QJsonDocument(obj).toJson();
@@ -289,20 +309,69 @@ void AdminPanelFormWidget::addStudent(QStringList groups)
     bool notCanceled;
     QString group = QInputDialog::getItem(this, "Выбор группы", "Выберите группу",
                                         groups, 0, false, &notCanceled);
-    if (!notCanceled)
+    if (notCanceled)
     {
         Requester* requester = Session::getRequester();
         //form json and send request
+        qDebug() << group;
         requester->sendRequest("add/user", Requester::Type::POST, getNewUserJson(group));
     }
 }
 
 void AdminPanelFormWidget::on_addCarPushButton_clicked()
 {
+    AddCarDialog dialog(this);
+    dialog.exec();
+}
 
+void AdminPanelFormWidget::on_addRoomPushButton_clicked()
+{
+    bool notCanceled;
+    int room = QInputDialog::getInt(this, "Номер аудитории", "Номер аудитории", 1, 1, 1000, 1, &notCanceled);
+    if (notCanceled)
+    {
+        Requester* requester = Session::getRequester();
+        //form json and send request
+        qDebug() << room;
+        QJsonObject obj;
+        obj = QJsonObject{{"token", Session::getInstance()->getToken()}, {"room", room}};
+
+        requester->sendRequest("add/room", Requester::Type::POST, QJsonDocument(obj).toJson());
+    }
+}
+
+void AdminPanelFormWidget::on_addGroupPushButton_clicked()
+{
+    bool notCanceled;
+    QString name = QInputDialog::getText(this, "Название группы", "Название группы", QLineEdit::Normal, "", &notCanceled);
+    if (notCanceled)
+    {
+        Requester* requester = Session::getRequester();
+        //form json and send request
+        qDebug() << name;
+        QJsonObject obj;
+        obj = QJsonObject{{"token", Session::getInstance()->getToken()}, {"name", name}};
+
+        requester->sendRequest("add/group", Requester::Type::POST, QJsonDocument(obj).toJson());
+    }
+}
+
+void AdminPanelFormWidget::on_addStudentPushButton_clicked()
+{
+    ui->mainTabWidget->setCurrentIndex(1);
 }
 
 void AdminPanelFormWidget::on_addUserFromViewPushButton_clicked()
+{
+    ui->mainTabWidget->setCurrentIndex(1);
+}
+
+void AdminPanelFormWidget::on_addInstructorPushButton_clicked()
+{
+    ui->mainTabWidget->setCurrentIndex(1);
+}
+
+void AdminPanelFormWidget::on_pushButton_clicked()
 {
     ui->mainTabWidget->setCurrentIndex(1);
 }

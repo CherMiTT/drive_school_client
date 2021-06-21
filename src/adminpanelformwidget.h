@@ -38,10 +38,20 @@ private slots:
 
     void on_addUserFromViewPushButton_clicked();
 
+    void on_addRoomPushButton_clicked();
+
+    void on_addGroupPushButton_clicked();
+
+    void on_addStudentPushButton_clicked();
+
+    void on_addInstructorPushButton_clicked();
+
+    void on_pushButton_clicked();
+
 private:
     Ui::AdminPanelFormWidget *ui;
 
-    [[nodiscard]] QByteArray getNewUserJson(QString group = "");
+    [[nodiscard]] QByteArray getNewUserJson(QString group = "", int salary = 0);
 };
 
 #endif // ADMINPANELFORMWIDGET_H

@@ -41,7 +41,7 @@
     <item>
      <widget class="QTabWidget" name="mainTabWidget">
       <property name="currentIndex">
-       <number>1</number>
+       <number>2</number>
       </property>
       <widget class="QWidget" name="showUsersTab">
        <attribute name="title">
@@ -57,7 +57,7 @@
          </rect>
         </property>
         <property name="currentIndex">
-         <number>0</number>
+         <number>6</number>
         </property>
         <widget class="QWidget" name="all">
          <attribute name="title">
@@ -145,7 +145,7 @@
             <x>0</x>
             <y>0</y>
             <width>751</width>
-            <height>601</height>
+            <height>571</height>
            </rect>
           </property>
           <column>
@@ -184,6 +184,19 @@
            </property>
           </column>
          </widget>
+         <widget class="QPushButton" name="addStudentPushButton">
+          <property name="geometry">
+           <rect>
+            <x>310</x>
+            <y>580</y>
+            <width>131</width>
+            <height>25</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Добавить студента</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="instructors">
          <attribute name="title">
@@ -195,7 +208,7 @@
             <x>0</x>
             <y>0</y>
             <width>761</width>
-            <height>601</height>
+            <height>571</height>
            </rect>
           </property>
           <column>
@@ -239,6 +252,19 @@
            </property>
           </column>
          </widget>
+         <widget class="QPushButton" name="addInstructorPushButton">
+          <property name="geometry">
+           <rect>
+            <x>310</x>
+            <y>580</y>
+            <width>151</width>
+            <height>25</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Добавить инструктора</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="admins">
          <attribute name="title">
@@ -250,7 +276,7 @@
             <x>10</x>
             <y>0</y>
             <width>751</width>
-            <height>601</height>
+            <height>571</height>
            </rect>
           </property>
           <column>
@@ -284,6 +310,19 @@
            </property>
           </column>
          </widget>
+         <widget class="QPushButton" name="addAdminPushButton">
+          <property name="geometry">
+           <rect>
+            <x>300</x>
+            <y>580</y>
+            <width>161</width>
+            <height>25</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Добавить администратора</string>
+          </property>
+         </widget>
         </widget>
         <widget class="QWidget" name="groups">
          <attribute name="title">
@@ -295,7 +334,7 @@
             <x>0</x>
             <y>0</y>
             <width>761</width>
-            <height>601</height>
+            <height>551</height>
            </rect>
           </property>
           <column>
@@ -308,6 +347,19 @@
             <string>название</string>
            </property>
           </column>
+         </widget>
+         <widget class="QPushButton" name="addGroupPushButton">
+          <property name="geometry">
+           <rect>
+            <x>320</x>
+            <y>570</y>
+            <width>111</width>
+            <height>25</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Добавить группу</string>
+          </property>
          </widget>
         </widget>
         <widget class="QWidget" name="cars">
@@ -366,7 +418,7 @@
             <x>0</x>
             <y>0</y>
             <width>771</width>
-            <height>601</height>
+            <height>571</height>
            </rect>
           </property>
           <column>
@@ -374,6 +426,19 @@
             <string>номер аудитории</string>
            </property>
           </column>
+         </widget>
+         <widget class="QPushButton" name="addRoomPushButton">
+          <property name="geometry">
+           <rect>
+            <x>310</x>
+            <y>580</y>
+            <width>141</width>
+            <height>25</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Добавить аудиторию</string>
+          </property>
          </widget>
         </widget>
        </widget>
@@ -683,6 +748,72 @@
        <attribute name="title">
         <string>Управление расписанием</string>
        </attribute>
+       <widget class="QTableWidget" name="tableWidget">
+        <property name="geometry">
+         <rect>
+          <x>-5</x>
+          <y>1</y>
+          <width>761</width>
+          <height>611</height>
+         </rect>
+        </property>
+        <column>
+         <property name="text">
+          <string>id</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>группа</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>дата</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>тип занятия</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>инструктор</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>аудитория</string>
+         </property>
+        </column>
+       </widget>
+       <widget class="QPushButton" name="pushButton">
+        <property name="geometry">
+         <rect>
+          <x>210</x>
+          <y>620</y>
+          <width>121</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Добавить занятие</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="pushButton_2">
+        <property name="geometry">
+         <rect>
+          <x>420</x>
+          <y>620</y>
+          <width>111</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Удалить занятие</string>
+        </property>
+       </widget>
       </widget>
       <widget class="QWidget" name="manageTestsTab">
        <attribute name="title">

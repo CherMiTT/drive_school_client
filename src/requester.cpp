@@ -174,7 +174,7 @@ void Requester::onFinishRequest(QNetworkReply* reply)
     }
     if(reply->url().toString().endsWith("/api/group-list"))
     {
-        qDebug() << "Processing cars reply";
+        qDebug() << "Processing group list";
         processGroupListRequest(reply);
         return;
     }
@@ -190,7 +190,12 @@ void Requester::onFinishRequest(QNetworkReply* reply)
         processRoomsRequest(reply);
         return;
     }
-
+    if(reply->url().toString().endsWith("/api/add/car"))
+    {
+        qDebug() << "Processing add car";
+        processAddCarRequest(reply);
+        return;
+    }
 }
 
 void Requester::processAuthorizationRequest(QNetworkReply *reply)
@@ -371,4 +376,15 @@ void Requester::processGroupListRequest(QNetworkReply *reply)
         groups << o.value("group").toString();
     }
     emit getStudentGroup(groups);
+}
+
+void Requester::processAddCarRequest(QNetworkReply *reply)
+{
+    QByteArray r = reply->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(r);
+    if(doc.object().value("status") == "fail")
+    {
+        qDebug() << "Failed to get information";
+        return;
+    }
 }

@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    addcardialog.cpp \
     adminpanelformwidget.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -20,6 +21,7 @@ SOURCES += \
     validator.cpp
 
 HEADERS += \
+    addcardialog.h \
     adminpanelformwidget.h \
     mainwindow.h \
     menuformwidget.h \
@@ -31,6 +33,7 @@ HEADERS += \
     validator.h
 
 FORMS += \
+    addcardialog.ui \
     adminpanelformwidget.ui \
     mainwindow.ui \
     mainwindow.ui \
