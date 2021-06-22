@@ -63,6 +63,10 @@ signals:
     void getLessonInstructor(QStringList list);
     void getLessonRoom(QStringList list);
     void showTestsArray(QJsonArray arr);
+    void showStudentSchedule(QJsonArray arr);
+    void showStudentGroup(QJsonObject arr);
+    void showTestIds(QStringList list);
+    void testInfo(QJsonObject o);
 private:
 
     explicit Requester(QObject* parent = nullptr);
@@ -106,6 +110,10 @@ private slots:
     void processLessonRoomsRequest(QNetworkReply *reply);
 
     void processAllTestsRequest(QNetworkReply *reply);
+    void processStudentScheduleRequest(QNetworkReply *reply);
+    void processStudentGroupRequest(QNetworkReply *reply);
+    void processStudentTestsIdsRequest(QNetworkReply *reply);
+    void processStudentTestRequest(QNetworkReply *reply);
 };
 
 #endif // REQUESTER_H

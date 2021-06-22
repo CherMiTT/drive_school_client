@@ -18,6 +18,7 @@ SOURCES += \
     menuformwidget.cpp \
     requester.cpp \
     session.cpp \
+    testdialog.cpp \
     welcomeformwidget.cpp \
     enterformwidget.cpp \
     validator.cpp
@@ -31,6 +32,7 @@ HEADERS += \
     menuformwidget.h \
     requester.h \
     session.h \
+    testdialog.h \
     welcomeformwidget.h \
     enterformwidget.h \
     forms.h \
@@ -44,6 +46,7 @@ FORMS += \
     mainwindow.ui \
     mainwindow.ui \
     menuformwidget.ui \
+    testdialog.ui \
     welcomeformwidget.ui \
     enterformwidget.ui
 

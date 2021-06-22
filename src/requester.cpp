@@ -226,6 +226,31 @@ void Requester::onFinishRequest(QNetworkReply* reply)
         processAllTestsRequest(reply);
         return;
     }
+
+    if(reply->url().toString().endsWith("/api/student/schedule"))
+    {
+        qDebug() << "Processing student schedule request";
+        processStudentScheduleRequest(reply);
+        return;
+    }
+    if(reply->url().toString().endsWith("/api/student/group"))
+    {
+        qDebug() << "Processing student group request";
+        processStudentGroupRequest(reply);
+        return;
+    }
+    if(reply->url().toString().endsWith("/api/student/test-ids"))
+    {
+        qDebug() << "Processing student tests request";
+        processStudentTestsIdsRequest(reply);
+        return;
+    }
+    if(reply->url().toString().endsWith("/api/student/test"))
+    {
+        qDebug() << "Processing student test request";
+        processStudentTestRequest(reply);
+        return;
+    }
 }
 
 void Requester::processAuthorizationRequest(QNetworkReply *reply)
@@ -440,6 +465,56 @@ void Requester::processAllTestsRequest(QNetworkReply *reply)
     QJsonDocument doc = QJsonDocument::fromJson(r);
     QJsonArray arr = doc.array();
     if(checkStatus(doc)) emit showTestsArray(arr);
+}
+
+void Requester::processStudentScheduleRequest(QNetworkReply *reply)
+{
+    QByteArray r = reply->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(r);
+    if(checkStatus(doc))
+    {
+        QJsonArray arr = doc.array();
+        emit showStudentSchedule(arr);
+    }
+}
+
+void Requester::processStudentGroupRequest(QNetworkReply *reply)
+{
+    QByteArray r = reply->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(r);
+    if(checkStatus(doc))
+    {
+        QJsonObject o = doc.object();
+        emit showStudentGroup(o);
+    }
+}
+
+void Requester::processStudentTestsIdsRequest(QNetworkReply *reply)
+{
+    QByteArray r = reply->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(r);
+    if(checkStatus(doc))
+    {
+        QJsonArray arr = doc.array();
+        QStringList ids;
+        for(int i = 0; i < arr.count(); i++)
+        {
+            QJsonObject o = arr[i].toObject();
+            ids << o.value("id").toString();
+        }
+        emit showTestIds(ids);
+    }
+}
+
+void Requester::processStudentTestRequest(QNetworkReply *reply)
+{
+    QByteArray r = reply->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(r);
+    if(checkStatus(doc))
+    {
+        QJsonObject o = doc.object();
+        emit testInfo(o);
+    }
 }
 
 bool Requester::checkStatus(QJsonDocument doc)
