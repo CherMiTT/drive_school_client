@@ -36,7 +36,6 @@ public:
 
 private slots:
     void on_enterPushButton_clicked();
-    void on_registerPushButton_clicked();
 
 signals:
     void showLoginForm(Forms);

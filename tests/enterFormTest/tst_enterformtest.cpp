@@ -55,9 +55,6 @@ void tst_EnterFormTest::structureCreatedTest()
     QVERIFY2(w->ui->passwordLabel, "passwordLabel not created");
     QCOMPARE(w->ui->passwordLabel->text(), "Пароль");
 
-    QVERIFY2(w->ui->forgotPasswordButton, "forgotPasswordButton not created");
-    QCOMPARE(w->ui->forgotPasswordButton->text(), "Забыли пароль?");
-
     QVERIFY2(w->ui->loginButton, "loginButton edit not created");
     QCOMPARE(w->ui->loginButton->text(), "Войти");
 
@@ -96,15 +93,6 @@ void tst_EnterFormTest::dataEntry()
 /*!
  * \brief Тестирует поведение при нажатии кнопки "Забыли пароль"
  */
-void tst_EnterFormTest::forgotPasswordButton()
-{
-    QSignalSpy spy(w, SIGNAL(showRestorePasswordForm(Forms)));
-    QTest::mouseClick(w->ui->forgotPasswordButton, Qt::LeftButton);
-
-    QCOMPARE(spy.size(), 1);
-    QList args = spy.takeFirst();
-    QCOMPARE(args.at(0).toInt(), static_cast<int>(Forms::RESTORE_PASSWORD_FORM));
-}
 
 QTEST_MAIN(tst_EnterFormTest)
 

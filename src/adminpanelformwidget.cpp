@@ -1,6 +1,8 @@
 #include "adminpanelformwidget.h"
 #include "ui_adminpanelformwidget.h"
 #include "addcardialog.h"
+#include "addlessondialog.h"
+#include "addtestdialog.h"
 
 AdminPanelFormWidget::AdminPanelFormWidget(QWidget *parent) :
     QWidget(parent),
@@ -15,6 +17,8 @@ AdminPanelFormWidget::AdminPanelFormWidget(QWidget *parent) :
     connect(Session::getRequester(), SIGNAL(showCarsArray(QJsonArray)), this, SLOT(on_receivedCarsArray(QJsonArray)));
     connect(Session::getRequester(), SIGNAL(showRoomsArray(QJsonArray)), this, SLOT(on_receivedRoomsArray(QJsonArray)));
     connect(Session::getRequester(), SIGNAL(getStudentGroup(QStringList)), this, SLOT(addStudent(QStringList)));
+    connect(Session::getRequester(), SIGNAL(showLessonsArray(QJsonArray)), this, SLOT(on_receivedLessonsArray(QJsonArray)));
+    connect(Session::getRequester(), SIGNAL(showTestsArray(QJsonArray)), this, SLOT(on_receivedTestArray(QJsonArray)));
 
     on_pickUsersTabWidget_currentChanged(0);
 
@@ -288,8 +292,8 @@ void AdminPanelFormWidget::on_receivedCarsArray(QJsonArray arr)
     {
         QJsonObject o = arr[i].toObject();
         ui->allCarsTableWidget->setItem(i, 0, new QTableWidgetItem(o.value("plate").toString()));
-        ui->allCarsTableWidget->setItem(i, 1, new QTableWidgetItem(o.value("model").toString()));
-        ui->allCarsTableWidget->setItem(i, 2, new QTableWidgetItem(o.value("status").toString()));
+        ui->allCarsTableWidget->setItem(i, 1, new QTableWidgetItem(o.value("status").toString()));
+        ui->allCarsTableWidget->setItem(i, 2, new QTableWidgetItem(o.value("model").toString()));
     }
 }
 
@@ -315,6 +319,42 @@ void AdminPanelFormWidget::addStudent(QStringList groups)
         //form json and send request
         qDebug() << group;
         requester->sendRequest("add/user", Requester::Type::POST, getNewUserJson(group));
+    }
+}
+
+void AdminPanelFormWidget::on_receivedLessonsArray(QJsonArray arr)
+{
+    ui->lessonsTableWidget->setRowCount(arr.count());
+
+    for(int i = 0; i < arr.count(); i++)
+    {
+        QJsonObject o = arr[i].toObject();
+        ui->lessonsTableWidget->setItem(i, 0, new QTableWidgetItem(o.value("id").toString()));
+        ui->lessonsTableWidget->setItem(i, 1, new QTableWidgetItem(o.value("group_name").toString()));
+        ui->lessonsTableWidget->setItem(i, 2, new QTableWidgetItem(o.value("lesson_time").toString()));
+        ui->lessonsTableWidget->setItem(i, 3, new QTableWidgetItem(o.value("lesson_type_name").toString()));
+        ui->lessonsTableWidget->setItem(i, 4, new QTableWidgetItem(o.value("instructor_name").toString()));
+        ui->lessonsTableWidget->setItem(i, 5, new QTableWidgetItem(o.value("aud_number").toString()));
+    }
+}
+
+void AdminPanelFormWidget::on_receivedTestArray(QJsonArray arr)
+{
+    ui->testTableWidget->setRowCount(arr.count());
+
+    for(int i = 0; i < arr.count(); i++)
+    {
+        QJsonObject o = arr[i].toObject();
+        ui->testTableWidget->setItem(i, 0, new QTableWidgetItem(o.value("id").toString()));
+        ui->testComboBox->addItem(o.value("id").toString());
+        ui->testTableWidget->setItem(i, 1, new QTableWidgetItem(o.value("author_id").toString()));
+        ui->testTableWidget->setItem(i, 2, new QTableWidgetItem(o.value("text").toString()));
+        ui->testTableWidget->setItem(i, 3, new QTableWidgetItem(o.value("var1").toString()));
+        ui->testTableWidget->setItem(i, 4, new QTableWidgetItem(o.value("var2").toString()));
+        ui->testTableWidget->setItem(i, 5, new QTableWidgetItem(o.value("var3").toString()));
+        ui->testTableWidget->setItem(i, 6, new QTableWidgetItem(o.value("var4").toString()));
+        ui->testTableWidget->setItem(i, 7, new QTableWidgetItem(o.value("answer").toString()));
+        ui->testTableWidget->setItem(i, 8, new QTableWidgetItem(o.value("comment").toString()));
     }
 }
 
@@ -374,4 +414,119 @@ void AdminPanelFormWidget::on_addInstructorPushButton_clicked()
 void AdminPanelFormWidget::on_pushButton_clicked()
 {
     ui->mainTabWidget->setCurrentIndex(1);
+}
+
+void AdminPanelFormWidget::on_mainTabWidget_currentChanged(int index)
+{
+    if(index == 2)
+    {
+        QJsonObject token {{"token", Session::getInstance()->getToken()}};
+        Requester* requester = Session::getRequester();
+        requester->sendRequest("all-lessons", Requester::Type::POST, QJsonDocument(token).toJson());
+        return;
+    }
+    if(index == 3)
+    {
+        QJsonObject token {{"token", Session::getInstance()->getToken()}};
+        Requester* requester = Session::getRequester();
+        requester->sendRequest("all-tests", Requester::Type::POST, QJsonDocument(token).toJson());
+        return;
+    }
+}
+
+void AdminPanelFormWidget::on_addLessonPushButton_clicked()
+{
+    AddLessonDialog dialog(this);
+    dialog.exec();
+}
+
+void AdminPanelFormWidget::on_addTestPushButton_clicked()
+{
+    AddTestDialog dialog(this);
+    dialog.exec();
+}
+
+void AdminPanelFormWidget::on_deleteUser_clicked()
+{
+    bool notCanceled;
+    QString login = QInputDialog::getText(this, "Логин пользователя", "Логин пользователя", QLineEdit::Normal, "", &notCanceled);
+    if (notCanceled)
+    {
+        Requester* requester = Session::getRequester();
+        QJsonObject obj;
+        obj = QJsonObject{{"token", Session::getInstance()->getToken()}, {"login", login}};
+        requester->sendRequest("delete/user", Requester::Type::POST, QJsonDocument(obj).toJson());
+    }
+}
+
+void AdminPanelFormWidget::on_deleteGroupPushButton_clicked()
+{
+    bool notCanceled;
+    int group = QInputDialog::getInt(this, "id группы", "id группы", 1, 1, 1000, 1, &notCanceled);
+    if (notCanceled)
+    {
+        Requester* requester = Session::getRequester();
+        //form json and send request
+        QJsonObject obj;
+        obj = QJsonObject{{"token", Session::getInstance()->getToken()}, {"group", group}};
+
+        requester->sendRequest("delete/group", Requester::Type::POST, QJsonDocument(obj).toJson());
+    }
+}
+
+void AdminPanelFormWidget::on_deleteRoomPushButton_clicked()
+{
+    bool notCanceled;
+    int room = QInputDialog::getInt(this, "Номер аудитории", "Номер аудитории", 1, 1, 1000, 1, &notCanceled);
+    if (notCanceled)
+    {
+        Requester* requester = Session::getRequester();
+        //form json and send request
+        QJsonObject obj;
+        obj = QJsonObject{{"token", Session::getInstance()->getToken()}, {"room", room}};
+
+        requester->sendRequest("delete/room", Requester::Type::POST, QJsonDocument(obj).toJson());
+    }
+}
+
+void AdminPanelFormWidget::on_deleteCarPushButton_clicked()
+{
+    bool notCanceled;
+    QString plate = QInputDialog::getText(this, "Номер машины", "Номер машины", QLineEdit::Normal, "", &notCanceled);
+    if (notCanceled)
+    {
+        Requester* requester = Session::getRequester();
+        QJsonObject obj;
+        obj = QJsonObject{{"token", Session::getInstance()->getToken()}, {"plate", plate}};
+        requester->sendRequest("delete/car", Requester::Type::POST, QJsonDocument(obj).toJson());
+    }
+}
+
+void AdminPanelFormWidget::on_removeLessoPushButton_clicked()
+{
+    bool notCanceled;
+    int id = QInputDialog::getInt(this, "id занятия", "id занятия", 1, 1, 1000, 1, &notCanceled);
+    if (notCanceled)
+    {
+        Requester* requester = Session::getRequester();
+        //form json and send request
+        QJsonObject obj;
+        obj = QJsonObject{{"token", Session::getInstance()->getToken()}, {"id", id}};
+
+        requester->sendRequest("delete/lesson", Requester::Type::POST, QJsonDocument(obj).toJson());
+    }
+}
+
+void AdminPanelFormWidget::on_deleteTestPushButton_clicked()
+{
+    bool notCanceled;
+    int id = QInputDialog::getInt(this, "id теста", "id теста", 1, 1, 1000, 1, &notCanceled);
+    if (notCanceled)
+    {
+        Requester* requester = Session::getRequester();
+        QJsonObject obj;
+        obj = QJsonObject{{"token", Session::getInstance()->getToken()}, {"id", id}};
+
+        requester->sendRequest("delete/test", Requester::Type::POST, QJsonDocument(obj).toJson());
+    }
 }

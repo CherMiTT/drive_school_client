@@ -57,7 +57,12 @@ signals:
     void showCarsArray(QJsonArray arr);
     void showRoomsArray(QJsonArray arr);
     void getStudentGroup(QStringList groups);
+    void showLessonsArray(QJsonArray arr);
 
+    void getLessonGroup(QStringList list);
+    void getLessonInstructor(QStringList list);
+    void getLessonRoom(QStringList list);
+    void showTestsArray(QJsonArray arr);
 private:
 
     explicit Requester(QObject* parent = nullptr);
@@ -77,6 +82,7 @@ private:
 
     [[nodiscard]] QNetworkRequest createRequest(const QString& apiStr) const;
     [[nodiscard]] QByteArray variantMapToJson(QVariantMap data);
+    [[nodiscard]] bool checkStatus(QJsonDocument doc);
 
 private slots:
     void onFinishRequest(QNetworkReply* reply);
@@ -93,6 +99,13 @@ private slots:
     void processRoomsRequest(QNetworkReply *reply);
     void processGroupListRequest(QNetworkReply *reply);
     void processAddCarRequest(QNetworkReply *reply);
+    void processAllLessonsRequest(QNetworkReply *reply);
+
+    void processLessonGroupRequest(QNetworkReply *reply);
+    void processLessonInstrRequest(QNetworkReply *reply);
+    void processLessonRoomsRequest(QNetworkReply *reply);
+
+    void processAllTestsRequest(QNetworkReply *reply);
 };
 
 #endif // REQUESTER_H

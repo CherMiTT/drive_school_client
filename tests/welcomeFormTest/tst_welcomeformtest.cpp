@@ -41,9 +41,6 @@ void tst_WelcomeFormtest::structureCreatedTest()
     QVERIFY2(w->ui->enterPushButton, "enterPushButton not created");
     QCOMPARE(w->ui->enterPushButton->text(), "Войти");
 
-    QVERIFY2(w->ui->registerPushButton, "registerPushButton not created");
-    QCOMPARE(w->ui->registerPushButton->text(), "Зарегистрироваться");
-
     QVERIFY2(w->ui->welcomeLabel, "welcomeLabel not createde");
 }
 
@@ -56,17 +53,6 @@ void tst_WelcomeFormtest::enterButtonTest()
     QList args = spy.takeFirst();
     QCOMPARE(args.at(0).toInt(), static_cast<int>(Forms::ENTER_FORM));
 }
-
-void tst_WelcomeFormtest::registerButtonTest()
-{
-    QSignalSpy spy(w, SIGNAL(showRegisterForm(Forms)));
-    QTest::mouseClick(w->ui->registerPushButton, Qt::LeftButton);
-
-    QCOMPARE(spy.size(), 1);
-    QList args = spy.takeFirst();
-    QCOMPARE(args.at(0).toInt(), static_cast<int>(Forms::REGISTER_FORM));
-}
-
 
 QTEST_MAIN(tst_WelcomeFormtest)
 

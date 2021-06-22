@@ -196,19 +196,43 @@ void Requester::onFinishRequest(QNetworkReply* reply)
         processAddCarRequest(reply);
         return;
     }
+    if(reply->url().toString().endsWith("/api/all-lessons"))
+    {
+        qDebug() << "Processing all lessons";
+        processAllLessonsRequest(reply);
+        return;
+    }
+    if(reply->url().toString().endsWith("/api/lesson-group-list"))
+    {
+        qDebug() << "Processing group list";
+        processLessonGroupRequest(reply);
+        return;
+    }
+    if(reply->url().toString().endsWith("/api/lesson-instr-list"))
+    {
+        qDebug() << "Processing instructor list";
+        processLessonInstrRequest(reply);
+        return;
+    }
+    if(reply->url().toString().endsWith("/api/lesson-rooms-list"))
+    {
+        qDebug() << "Processing rooms list";
+        processLessonRoomsRequest(reply);
+        return;
+    }
+    if(reply->url().toString().endsWith("/api/all-tests"))
+    {
+        qDebug() << "Processing all test request";
+        processAllTestsRequest(reply);
+        return;
+    }
 }
 
 void Requester::processAuthorizationRequest(QNetworkReply *reply)
 {
     QByteArray r = reply->readAll();
     QJsonDocument doc = QJsonDocument::fromJson(r);
-    if(doc.object().value("status") == "fail")
-    {
-        qDebug() << "Authorization request failed";
-        emit wrongAuthorizationData();
-        return;
-    }
-    else
+    if(checkStatus(doc))
     {
         QString token = doc.object().value("token").toString();
         Session::getInstance()->setToken(token);
@@ -220,12 +244,7 @@ void Requester::processUserInfoRequest(QNetworkReply *reply)
 {
     QByteArray r = reply->readAll();
     QJsonDocument doc = QJsonDocument::fromJson(r);
-    if(doc.object().value("status") == "fail")
-    {
-        qDebug() << "User info request failed";
-        return;
-    }
-    else
+    if(checkStatus(doc))
     {
         QString roleStr = doc.object().value("role").toString();
         Roles role;
@@ -246,145 +265,189 @@ void Requester::processAddUserRequest(QNetworkReply *reply)
 {
     QByteArray r = reply->readAll();
     QJsonDocument doc = QJsonDocument::fromJson(r);
-    if(doc.object().value("status") == "fail")
-    {
-        qDebug() << "Failed to add user";
-        emit addUserResult(false);
-        return;
-    }
-    else
-    {
-        qDebug() << "User added successfully";
-        emit addUserResult(true);
-        return;
-    }
+    if(checkStatus(doc)) emit addUserResult(true);
 }
 
 void Requester::processAllUsersRequest(QNetworkReply *reply)
 {
     QByteArray r = reply->readAll();
     QJsonDocument doc = QJsonDocument::fromJson(r);
-    if(doc.object().value("status") == "fail")
+    if(checkStatus(doc))
     {
-        qDebug() << "Failed to get information";
-        return;
+        QJsonArray arr = doc.array();
+        emit showAllUsersArray(arr);
     }
-
-    QJsonArray arr = doc.array();
-    emit showAllUsersArray(arr);
 }
 
 void Requester::processAdminsRequest(QNetworkReply *reply)
 {
     QByteArray r = reply->readAll();
     QJsonDocument doc = QJsonDocument::fromJson(r);
-    if(doc.object().value("status") == "fail")
+    if(checkStatus(doc))
     {
-        qDebug() << "Failed to get information";
-        return;
+        QJsonArray arr = doc.array();
+        emit showAdminsArray(arr);
     }
-
-    QJsonArray arr = doc.array();
-    emit showAdminsArray(arr);
 }
 
 void Requester::processInstructorsRequest(QNetworkReply *reply)
 {
     QByteArray r = reply->readAll();
     QJsonDocument doc = QJsonDocument::fromJson(r);
-    if(doc.object().value("status") == "fail")
+    if(checkStatus(doc))
     {
-        qDebug() << "Failed to get information";
-        return;
+        QJsonArray arr = doc.array();
+        emit showIstructorsArray(arr);
     }
-
-    QJsonArray arr = doc.array();
-    emit showIstructorsArray(arr);
 }
 
 void Requester::processStudentsRequest(QNetworkReply *reply)
 {
     QByteArray r = reply->readAll();
     QJsonDocument doc = QJsonDocument::fromJson(r);
-    if(doc.object().value("status") == "fail")
+    if(checkStatus(doc))
     {
-        qDebug() << "Failed to get information";
-        return;
+        QJsonArray arr = doc.array();
+        emit showStudentsArray(arr);
     }
-
-    QJsonArray arr = doc.array();
-    emit showStudentsArray(arr);
 }
 
 void Requester::processGroupsRequest(QNetworkReply *reply)
 {
     QByteArray r = reply->readAll();
     QJsonDocument doc = QJsonDocument::fromJson(r);
-    if(doc.object().value("status") == "fail")
+    if(checkStatus(doc))
     {
-        qDebug() << "Failed to get information";
-        return;
+        QJsonArray arr = doc.array();
+        emit showGroupsArray(arr);
     }
-
-    QJsonArray arr = doc.array();
-    emit showGroupsArray(arr);
 }
 
 void Requester::processCarsRequest(QNetworkReply *reply)
 {
     QByteArray r = reply->readAll();
     QJsonDocument doc = QJsonDocument::fromJson(r);
-    if(doc.object().value("status") == "fail")
+    if(checkStatus(doc))
     {
-        qDebug() << "Failed to get information";
-        return;
+        QJsonArray arr = doc.array();
+        emit showCarsArray(arr);
     }
-
-    QJsonArray arr = doc.array();
-    emit showCarsArray(arr);
 }
 
 void Requester::processRoomsRequest(QNetworkReply *reply)
 {
     QByteArray r = reply->readAll();
     QJsonDocument doc = QJsonDocument::fromJson(r);
-    if(doc.object().value("status") == "fail")
+    if(checkStatus(doc))
     {
-        qDebug() << "Failed to get information";
-        return;
+        QJsonArray arr = doc.array();
+        emit showRoomsArray(arr);
     }
-
-    QJsonArray arr = doc.array();
-    emit showRoomsArray(arr);
 }
 
 void Requester::processGroupListRequest(QNetworkReply *reply)
 {
     QByteArray r = reply->readAll();
     QJsonDocument doc = QJsonDocument::fromJson(r);
-    if(doc.object().value("status") == "fail")
+    if(checkStatus(doc))
     {
-        qDebug() << "Failed to get information";
-        return;
+        QJsonArray arr = doc.array();
+        QStringList groups;
+        for(int i = 0; i < arr.count(); i++)
+        {
+            QJsonObject o = arr[i].toObject();
+            groups << o.value("group").toString();
+        }
+        emit getStudentGroup(groups);
     }
-
-    QJsonArray arr = doc.array();
-    QStringList groups;
-    for(int i = 0; i < arr.count(); i++)
-    {
-        QJsonObject o = arr[i].toObject();
-        groups << o.value("group").toString();
-    }
-    emit getStudentGroup(groups);
 }
 
 void Requester::processAddCarRequest(QNetworkReply *reply)
 {
     QByteArray r = reply->readAll();
     QJsonDocument doc = QJsonDocument::fromJson(r);
+    if(checkStatus(doc));
+}
+
+void Requester::processAllLessonsRequest(QNetworkReply *reply)
+{
+    QByteArray r = reply->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(r);
+    if(checkStatus(doc))
+    {
+        QJsonArray arr = doc.array();
+        emit showLessonsArray(arr);
+    }
+}
+
+void Requester::processLessonGroupRequest(QNetworkReply *reply)
+{
+    QByteArray r = reply->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(r);
+    if(checkStatus(doc))
+    {
+        QJsonArray arr = doc.array();
+        QStringList groups;
+        for(int i = 0; i < arr.count(); i++)
+        {
+            QJsonObject o = arr[i].toObject();
+            groups << o.value("group").toString();
+        }
+        emit getLessonGroup(groups);
+    }
+}
+
+void Requester::processLessonInstrRequest(QNetworkReply *reply)
+{
+    QByteArray r = reply->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(r);
+    if(checkStatus(doc))
+    {
+        QJsonArray arr = doc.array();
+        QStringList instr;
+        for(int i = 0; i < arr.count(); i++)
+        {
+            QJsonObject o = arr[i].toObject();
+            QString name = o.value("first_name").toString() + " " +
+                    o.value("middle_name").toString() + " " +
+                    o.value("last_name").toString();
+            instr << name;
+        }
+        emit getLessonInstructor(instr);
+    }
+}
+
+void Requester::processLessonRoomsRequest(QNetworkReply *reply)
+{
+    QByteArray r = reply->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(r);
+    if(checkStatus(doc))
+    {
+        QJsonArray arr = doc.array();
+        QStringList rooms;
+        for(int i = 0; i < arr.count(); i++)
+        {
+            QJsonObject o = arr[i].toObject();
+            rooms << o.value("number").toString();
+        }
+        emit getLessonRoom(rooms);
+    }
+}
+
+void Requester::processAllTestsRequest(QNetworkReply *reply)
+{
+    QByteArray r = reply->readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(r);
+    QJsonArray arr = doc.array();
+    if(checkStatus(doc)) emit showTestsArray(arr);
+}
+
+bool Requester::checkStatus(QJsonDocument doc)
+{
     if(doc.object().value("status") == "fail")
     {
         qDebug() << "Failed to get information";
-        return;
+        return false;
     }
+    return true;
 }

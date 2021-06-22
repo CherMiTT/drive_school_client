@@ -26,8 +26,3 @@ void WelcomeFormWidget::on_enterPushButton_clicked()
 {
     emit showLoginForm(Forms::ENTER_FORM);
 }
-
-void WelcomeFormWidget::on_registerPushButton_clicked()
-{
-    emit showRegisterForm(Forms::REGISTER_FORM);
-}

@@ -35,8 +35,8 @@
   <widget class="QPushButton" name="enterPushButton">
    <property name="geometry">
     <rect>
-     <x>240</x>
-     <y>430</y>
+     <x>270</x>
+     <y>390</y>
      <width>131</width>
      <height>21</height>
     </rect>
@@ -46,18 +46,24 @@
    </property>
   </widget>
   <widget class="QPushButton" name="registerPushButton">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="geometry">
     <rect>
-     <x>420</x>
-     <y>430</y>
+     <x>410</x>
+     <y>390</y>
      <width>131</width>
-     <height>21</height>
+     <height>25</height>
     </rect>
    </property>
    <property name="text">
     <string>Зарегистрироваться</string>
    </property>
   </widget>
+  <zorder>registerPushButton</zorder>
+  <zorder>welcomeLabel</zorder>
+  <zorder>enterPushButton</zorder>
  </widget>
  <resources/>
  <connections/>

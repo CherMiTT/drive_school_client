@@ -51,12 +51,6 @@ void EnterFormWidget::on_loginButton_clicked()
     qDebug("Authorization request sent");
 }
 
-void EnterFormWidget::on_forgotPasswordButton_clicked()
-{
-    qDebug() << "Forgot password button clicked";
-    emit showRestorePasswordForm(Forms::RESTORE_PASSWORD_FORM);
-}
-
 void EnterFormWidget::wrongLoginOrPassword()
 {
     ui->errorLabel->setText("Неверный логин или пароль");

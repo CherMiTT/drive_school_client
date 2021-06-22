@@ -15,6 +15,9 @@ public:
     explicit MenuFormWidget(QWidget *parent = nullptr);
     ~MenuFormWidget();
 
+private slots:
+    void on_tabWidget_currentChanged(int index);
+
 private:
     Ui::MenuFormWidget *ui;
 };

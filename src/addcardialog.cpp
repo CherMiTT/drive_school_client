@@ -26,3 +26,4 @@ void AddCarDialog::on_buttonBox_accepted()
 
     Session::getRequester()->sendRequest("add/car", Requester::Type::POST, QJsonDocument(obj).toJson());
 }
+

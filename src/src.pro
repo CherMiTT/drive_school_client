@@ -10,6 +10,8 @@ CONFIG += c++17
 
 SOURCES += \
     addcardialog.cpp \
+    addlessondialog.cpp \
+    addtestdialog.cpp \
     adminpanelformwidget.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -22,6 +24,8 @@ SOURCES += \
 
 HEADERS += \
     addcardialog.h \
+    addlessondialog.h \
+    addtestdialog.h \
     adminpanelformwidget.h \
     mainwindow.h \
     menuformwidget.h \
@@ -34,6 +38,8 @@ HEADERS += \
 
 FORMS += \
     addcardialog.ui \
+    addlessondialog.ui \
+    addtestdialog.ui \
     adminpanelformwidget.ui \
     mainwindow.ui \
     mainwindow.ui \

@@ -41,7 +41,7 @@
     <item>
      <widget class="QTabWidget" name="mainTabWidget">
       <property name="currentIndex">
-       <number>2</number>
+       <number>3</number>
       </property>
       <widget class="QWidget" name="showUsersTab">
        <attribute name="title">
@@ -57,7 +57,7 @@
          </rect>
         </property>
         <property name="currentIndex">
-         <number>6</number>
+         <number>5</number>
         </property>
         <widget class="QWidget" name="all">
          <attribute name="title">
@@ -124,7 +124,7 @@
          <widget class="QPushButton" name="addUserFromViewPushButton">
           <property name="geometry">
            <rect>
-            <x>300</x>
+            <x>220</x>
             <y>560</y>
             <width>151</width>
             <height>25</height>
@@ -132,6 +132,19 @@
           </property>
           <property name="text">
            <string>Добавить пользователя</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="deleteUser">
+          <property name="geometry">
+           <rect>
+            <x>420</x>
+            <y>560</y>
+            <width>151</width>
+            <height>25</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Удалить пользователя</string>
           </property>
          </widget>
         </widget>
@@ -351,7 +364,7 @@
          <widget class="QPushButton" name="addGroupPushButton">
           <property name="geometry">
            <rect>
-            <x>320</x>
+            <x>240</x>
             <y>570</y>
             <width>111</width>
             <height>25</height>
@@ -359,6 +372,19 @@
           </property>
           <property name="text">
            <string>Добавить группу</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="deleteGroupPushButton">
+          <property name="geometry">
+           <rect>
+            <x>390</x>
+            <y>570</y>
+            <width>101</width>
+            <height>25</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Удалить группу</string>
           </property>
          </widget>
         </widget>
@@ -397,7 +423,7 @@
          <widget class="QPushButton" name="addCarPushButton">
           <property name="geometry">
            <rect>
-            <x>290</x>
+            <x>180</x>
             <y>550</y>
             <width>141</width>
             <height>25</height>
@@ -405,6 +431,19 @@
           </property>
           <property name="text">
            <string>Добавить машину</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="deleteCarPushButton">
+          <property name="geometry">
+           <rect>
+            <x>440</x>
+            <y>550</y>
+            <width>121</width>
+            <height>25</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Удалить машину</string>
           </property>
          </widget>
         </widget>
@@ -430,7 +469,7 @@
          <widget class="QPushButton" name="addRoomPushButton">
           <property name="geometry">
            <rect>
-            <x>310</x>
+            <x>200</x>
             <y>580</y>
             <width>141</width>
             <height>25</height>
@@ -438,6 +477,19 @@
           </property>
           <property name="text">
            <string>Добавить аудиторию</string>
+          </property>
+         </widget>
+         <widget class="QPushButton" name="deleteRoomPushButton">
+          <property name="geometry">
+           <rect>
+            <x>450</x>
+            <y>580</y>
+            <width>131</width>
+            <height>25</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Удалить аудиторию</string>
           </property>
          </widget>
         </widget>
@@ -748,7 +800,7 @@
        <attribute name="title">
         <string>Управление расписанием</string>
        </attribute>
-       <widget class="QTableWidget" name="tableWidget">
+       <widget class="QTableWidget" name="lessonsTableWidget">
         <property name="geometry">
          <rect>
           <x>-5</x>
@@ -788,7 +840,7 @@
          </property>
         </column>
        </widget>
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="addLessonPushButton">
         <property name="geometry">
          <rect>
           <x>210</x>
@@ -801,7 +853,7 @@
          <string>Добавить занятие</string>
         </property>
        </widget>
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="removeLessoPushButton">
         <property name="geometry">
          <rect>
           <x>420</x>
@@ -819,6 +871,110 @@
        <attribute name="title">
         <string>Управление тестами</string>
        </attribute>
+       <widget class="QTableWidget" name="testTableWidget">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>751</width>
+          <height>601</height>
+         </rect>
+        </property>
+        <column>
+         <property name="text">
+          <string>id</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>author_id</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>text</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>var1</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>var2</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>var3</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>var4</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>true_answer</string>
+         </property>
+        </column>
+        <column>
+         <property name="text">
+          <string>comment</string>
+         </property>
+        </column>
+       </widget>
+       <widget class="QPushButton" name="addTestPushButton">
+        <property name="geometry">
+         <rect>
+          <x>80</x>
+          <y>620</y>
+          <width>101</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Добавить тест</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="deleteTestPushButton">
+        <property name="geometry">
+         <rect>
+          <x>290</x>
+          <y>620</y>
+          <width>101</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Удалить тест</string>
+        </property>
+       </widget>
+       <widget class="QPushButton" name="openTestPushButton">
+        <property name="geometry">
+         <rect>
+          <x>480</x>
+          <y>620</y>
+          <width>111</width>
+          <height>25</height>
+         </rect>
+        </property>
+        <property name="text">
+         <string>Просмотреть тест</string>
+        </property>
+       </widget>
+       <widget class="QComboBox" name="testComboBox">
+        <property name="geometry">
+         <rect>
+          <x>600</x>
+          <y>620</y>
+          <width>75</width>
+          <height>24</height>
+         </rect>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>
